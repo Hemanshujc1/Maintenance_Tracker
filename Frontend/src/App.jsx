@@ -11,6 +11,8 @@ import DashboardLayout from './components/DashboardLayout';
 import EquipmentList from './pages/EquipmentList';
 import EquipmentForm from './pages/EquipmentForm';
 import RequestList from './pages/RequestList';
+import CalendarPage from './pages/CalendarPage';
+import ReportsPage from './pages/ReportsPage';
 import './App.css';
 
 // Public Route wrapper to redirect to dashboard if already logged in
@@ -46,17 +48,26 @@ function App() {
 
           {/* Protected Routes Wrapped in DashboardLayout */}
           <Route element={<DashboardLayout />}>
-              {/* Admin/Manager Dashboard */}
-              <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-              </Route>
+            {/* Admin/Manager Dashboard */}
+            <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
 
-              {/* Equipment Routes - Accessible to Admin, Manager, Technician */}
-              <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician', 'Employee']} />}>
-                 <Route path="/equipment" element={<EquipmentList />} />
-                 <Route path="/equipment/new" element={<EquipmentForm />} />
-                 <Route path="/equipment/:id" element={<EquipmentForm />} />
-              </Route>
+            {/* Equipment Routes - Accessible to Admin, Manager, Technician */}
+            <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician', 'Employee']} />}>
+              <Route path="/equipment" element={<EquipmentList />} />
+              <Route path="/equipment/new" element={<EquipmentForm />} />
+              <Route path="/equipment/:id" element={<EquipmentForm />} />
+            </Route>
+
+            {/* Calendar & Reports Routes */}
+            <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician']} />}>
+              <Route path="/calendar" element={<CalendarPage />} />
+            </Route>
+
+            <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
+              <Route path="/reports" element={<ReportsPage />} />
+            </Route>
           </Route>
 
           {/* Redirect root to login (or dashboard if auth handled by PublicRoute logic/ProtectedRoute) */}
