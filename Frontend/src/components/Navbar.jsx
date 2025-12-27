@@ -18,23 +18,41 @@ const Navbar = () => {
     return (
         <nav className="dashboard-nav">
             <h1>Maintenance Tracker</h1>
-            
+
             <div className="nav-links-container">
                 {['Admin', 'Manager'].includes(user?.role) && (
-                    <Link 
-                        to="/dashboard" 
+                    <Link
+                        to="/dashboard"
                         className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}
                     >
                         Users
                     </Link>
                 )}
-                
-                <Link 
-                    to="/equipment" 
+
+                <Link
+                    to="/equipment"
                     className={`nav-item ${isActive('/equipment') || location.pathname.startsWith('/equipment') ? 'active' : ''}`}
                 >
                     Equipment
                 </Link>
+
+                {['Admin', 'Manager', 'Technician'].includes(user?.role) && (
+                    <Link
+                        to="/calendar"
+                        className={`nav-item ${isActive('/calendar') ? 'active' : ''}`}
+                    >
+                        Calendar
+                    </Link>
+                )}
+
+                {['Admin', 'Manager'].includes(user?.role) && (
+                    <Link
+                        to="/reports"
+                        className={`nav-item ${isActive('/reports') ? 'active' : ''}`}
+                    >
+                        Reports
+                    </Link>
+                )}
             </div>
 
             <div className="user-info">
