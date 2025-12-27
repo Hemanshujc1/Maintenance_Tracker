@@ -5,7 +5,15 @@ const User = require('../models/User');
 // @access  Private/Admin/Manager
 exports.getUsers = async (req, res) => {
   try {
+    let whereClause = {};
+    
+    // RBAC: Managers can only see Technicians and Employees
+    if (req.user.role === 'Manager') {
+        whereClause.role = ['Technician', 'Employee'];
+    }
+
     const users = await User.findAll({
+      where: whereClause,
       attributes: { exclude: ['password_hash'] }
     });
     res.json(users);
