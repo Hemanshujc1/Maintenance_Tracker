@@ -5,7 +5,15 @@ const Request = require('../models/Request');
 // Get all equipment
 const getAllEquipment = async (req, res) => {
     try {
+        let whereClause = {};
+
+        // If user is just an Employee, only show assigned equipment
+        if (req.user.role === 'Employee') {
+            whereClause = { assigned_employee_id: req.user.id };
+        }
+
         const equipment = await Equipment.findAll({
+            where: whereClause,
             include: [{
                 model: Request,
                 attributes: ['id', 'status', 'priority']
