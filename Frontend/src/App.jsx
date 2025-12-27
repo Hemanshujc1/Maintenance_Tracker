@@ -3,113 +3,70 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
+import Dashboard from './components/Dashboard';
+import Unauthorized from './components/Unauthorized';
+import ForgotPassword from './components/ForgotPassword';
+import ProtectedRoute from './components/ProtectedRoute';
+import DashboardLayout from './components/DashboardLayout';
 import EquipmentList from './pages/EquipmentList';
 import EquipmentForm from './pages/EquipmentForm';
 import './App.css';
 
 // Public Route wrapper to redirect to dashboard if already logged in
 const PublicRoute = ({ children }) => {
-    const { user, loading } = useAuth();
-    if (loading) return <div>Loading...</div>;
-    if (user) return <Navigate to="/dashboard" replace />;
-    return children;
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  if (user) return <Navigate to="/dashboard" replace />;
+  return children;
 };
 
 function App() {
-    const [currentForm, setCurrentForm] = useState('login');
+  return (
+    <Router>
+      <AuthProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          } />
+          <Route path="/signup" element={
+            <PublicRoute>
+              <SignUp />
+            </PublicRoute>
+          } />
+          <Route path="/forgot-password" element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          } />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
-    const toggleForm = (formName) => {
-        setCurrentForm(formName);
-    };
+          {/* Protected Routes Wrapped in DashboardLayout */}
+          <Route element={<DashboardLayout />}>
+              {/* Admin/Manager Dashboard */}
+              <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Route>
 
-    // Mocking auth status for now to allow access to equipment routes without full auth implementation
-    // In a real scenario, this would check the AuthContext
-    const isAuthenticated = !!localStorage.getItem('token');
+              {/* Equipment Routes - Accessible to Admin, Manager, Technician */}
+              <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician', 'Employee']} />}>
+                 <Route path="/equipment" element={<EquipmentList />} />
+                 <Route path="/equipment/new" element={<EquipmentForm />} />
+                 <Route path="/equipment/:id" element={<EquipmentForm />} />
+              </Route>
+          </Route>
 
-    return (
-        <AuthProvider>
-            <Router>
-                <div className="app">
-                    <Routes>
-                        <Route path="/login" element={<Login onSwitchToSignUp={() => toggleForm('signup')} />} />
-                        <Route path="/signup" element={<SignUp onSwitchToLogin={() => toggleForm('login')} />} />
+          {/* Redirect root to login (or dashboard if auth handled by PublicRoute logic/ProtectedRoute) */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                        {/* Protected Routes */}
-                        <Route path="/" element={
-                            isAuthenticated ? (
-                                <div className="dashboard">
-                                    <nav className="navbar">
-                                        <Link to="/" className="nav-brand">Maintenance Tracker</Link>
-                                        <div className="nav-links">
-                                            <Link to="/equipment">Equipment</Link>
-                                        </div>
-                                        <button onClick={() => {
-                                            localStorage.removeItem('token');
-                                            window.location.href = '/login';
-                                        }} className="btn btn-secondary">Logout</button>
-                                    </nav>
-                                    <div className="home"><h1>Welcome to Maintenance Tracker</h1><Link to="/equipment">Manage Equipment</Link></div>
-                                </div>
-                            ) : <Navigate to="/login" />
-                        } />
-
-                        <Route path="/equipment" element={
-                            isAuthenticated ? (
-                                <div className="dashboard">
-                                    <nav className="navbar">
-                                        <Link to="/" className="nav-brand">Maintenance Tracker</Link>
-                                        <div className="nav-links">
-                                            <Link to="/equipment">Equipment</Link>
-                                        </div>
-                                        <button onClick={() => {
-                                            localStorage.removeItem('token');
-                                            window.location.href = '/login';
-                                        }} className="btn btn-secondary">Logout</button>
-                                    </nav>
-                                    <main className="main-content">
-                                        <EquipmentList />
-                                    </main>
-                                </div>
-                            ) : <Navigate to="/login" />
-                        } />
-
-                        <Route path="/equipment/new" element={
-                            isAuthenticated ? (
-                                <div className="dashboard">
-                                    <nav className="navbar">
-                                        <Link to="/" className="nav-brand">Maintenance Tracker</Link>
-                                        <div className="nav-links">
-                                            <Link to="/equipment">Equipment</Link>
-                                        </div>
-                                    </nav>
-                                    <main className="main-content">
-                                        <EquipmentForm />
-                                    </main>
-                                </div>
-                            ) : <Navigate to="/login" />
-                        } />
-
-                        <Route path="/equipment/:id" element={
-                            isAuthenticated ? (
-                                <div className="dashboard">
-                                    <nav className="navbar">
-                                        <Link to="/" className="nav-brand">Maintenance Tracker</Link>
-                                        <div className="nav-links">
-                                            <Link to="/equipment">Equipment</Link>
-                                        </div>
-                                    </nav>
-                                    <main className="main-content">
-                                        <EquipmentForm />
-                                    </main>
-                                </div>
-                            ) : <Navigate to="/login" />
-                        } />
-
-                    </Routes>
-                </div>
-            </Router>
-        </AuthProvider>
-    );
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </AuthProvider>
+    </Router>
+  );
 }
 
 export default App;

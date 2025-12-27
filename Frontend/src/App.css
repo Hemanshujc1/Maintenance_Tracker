@@ -425,3 +425,64 @@ body {
 .action-btn.activate:hover {
     background: #f0fdf4;
 }
+/* Additions for Navbar and Table Consistency */
+.nav-links-container {
+    display: flex;
+    gap: 1.5rem;
+    margin-left: 2rem;
+    flex-grow: 1;
+}
+
+.nav-item {
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 500;
+    padding: 0.5rem 0rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.nav-item:hover {
+    color: #4f46e5;
+}
+
+.nav-item.active {
+    color: #4f46e5;
+    border-bottom-color: #4f46e5;
+    font-weight: 600;
+}
+
+/* Ensure 'table' class (used in EquipmentList) looks good */
+.table {
+    width: 100%;
+    border-collapse: collapse; /* Changed from separate to match user-table */
+    background: #fff;
+    border-radius: 12px; /* Needs overflow hidden on container usually */
+    overflow: hidden;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.table th {
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.5rem; /* Match user-table padding */
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table td {
+    padding: 1rem 1.5rem; /* Match user-table padding */
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+}
+
+.table tr:hover {
+    background-color: #f8fafc;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}

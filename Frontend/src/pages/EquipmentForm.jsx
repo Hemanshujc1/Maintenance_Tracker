@@ -52,10 +52,19 @@ const EquipmentForm = () => {
         setError(null);
 
         try {
+            // Sanitize payload: convert empty strings to null for optional fields
+            const payload = { ...formData };
+            const optionalFields = ['department_id', 'assigned_employee_id', 'maintenance_team_id', 'purchase_date', 'warranty_expiry'];
+            optionalFields.forEach(field => {
+                if (payload[field] === '') {
+                    payload[field] = null;
+                }
+            });
+
             if (isEditMode) {
-                await api.put(`/equipment/${id}`, formData);
+                await api.put(`/equipment/${id}`, payload);
             } else {
-                await api.post('/equipment', formData);
+                await api.post('/equipment', payload);
             }
             navigate('/equipment');
         } catch (err) {
