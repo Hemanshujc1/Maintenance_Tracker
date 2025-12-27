@@ -7,10 +7,10 @@ const checkRole = require('../middleware/roleMiddleware');
 // Get all users (Admin & Manager)
 router.get('/', protect, checkRole(['Admin', 'Manager']), getUsers);
 
-// Update Role (Admin only)
-router.put('/:id/role', protect, checkRole(['Admin']), updateUserRole);
+// Update Role (Admin & Manager)
+router.put('/:id/role', protect, checkRole(['Admin', 'Manager']), updateUserRole);
 
-// Update Status (Admin only)
-router.put('/:id/status', protect, checkRole(['Admin']), updateUserStatus);
+// Update Status (Admin & Manager)
+router.put('/:id/status', protect, checkRole(['Admin', 'Manager']), updateUserStatus);
 
 module.exports = router;

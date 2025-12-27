@@ -35,6 +35,16 @@ exports.updateUserRole = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Safety Logic for Managers
+    if (req.user.role === 'Manager') {
+        if (user.role === 'Admin' || user.role === 'Manager') {
+            return res.status(403).json({ message: 'Access denied: Cannot modify Admin or Manager accounts' });
+        }
+        if (role === 'Admin' || role === 'Manager') {
+            return res.status(403).json({ message: 'Access denied: Cannot assign Admin or Manager roles' });
+        }
+    }
+
     user.role = role;
     await user.save();
 
@@ -55,6 +65,13 @@ exports.updateUserStatus = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Safety Logic for Managers
+    if (req.user.role === 'Manager') {
+        if (user.role === 'Admin' || user.role === 'Manager') {
+            return res.status(403).json({ message: 'Access denied: Cannot modify Admin or Manager accounts' });
+        }
     }
 
     user.status = status;
