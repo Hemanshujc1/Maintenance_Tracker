@@ -62,7 +62,6 @@ PUT    /users/:id/status
 
 * Equipment CRUD
 * Assign:
-
   * department
   * employee
   * maintenance team
