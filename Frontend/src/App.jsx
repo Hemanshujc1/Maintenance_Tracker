@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/DashboardLayout';
 import EquipmentList from './pages/EquipmentList';
 import EquipmentForm from './pages/EquipmentForm';
+import EquipmentDetail from './pages/EquipmentDetail';
 import RequestList from './pages/RequestList';
 import CalendarPage from './pages/CalendarPage';
 import ReportsPage from './pages/ReportsPage';
@@ -57,7 +58,8 @@ function App() {
             <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician', 'Employee']} />}>
               <Route path="/equipment" element={<EquipmentList />} />
               <Route path="/equipment/new" element={<EquipmentForm />} />
-              <Route path="/equipment/:id" element={<EquipmentForm />} />
+              <Route path="/equipment/:id" element={<EquipmentDetail />} />
+              <Route path="/equipment/:id/edit" element={<EquipmentForm />} />
             </Route>
 
             {/* Calendar & Reports Routes */}

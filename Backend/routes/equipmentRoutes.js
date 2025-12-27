@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const equipmentController = require('../controllers/equipmentController');
 
-const { protect, authorize } = require('../middleware/authMiddleware');
+const protect = require('../middleware/authMiddleware');
+const authorize = require('../middleware/roleMiddleware');
 
 // Routes
 // View: All authenticated users (Logic varies by role in controller)
