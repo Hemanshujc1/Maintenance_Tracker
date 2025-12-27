@@ -1,9 +1,15 @@
 const Equipment = require('../models/Equipment');
 
+const Request = require('../models/Request');
+
 // Get all equipment
 const getAllEquipment = async (req, res) => {
     try {
         const equipment = await Equipment.findAll({
+            include: [{
+                model: Request,
+                attributes: ['id', 'status', 'priority']
+            }],
             order: [['created_at', 'DESC']]
         });
         res.json(equipment);

@@ -66,5 +66,6 @@ const Equipment = sequelize.define('Equipment', {
 Equipment.belongsTo(Department, { foreignKey: 'department_id' });
 Equipment.belongsTo(MaintenanceTeam, { foreignKey: 'maintenance_team_id' });
 Equipment.belongsTo(User, { as: 'assignedEmployee', foreignKey: 'assigned_employee_id' });
+// Circular dependency handled in Request.js now
 
 module.exports = Equipment;

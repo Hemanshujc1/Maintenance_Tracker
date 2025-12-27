@@ -69,6 +69,7 @@ const Request = sequelize.define('Request', {
 
 // Associations
 Request.belongsTo(Equipment, { foreignKey: 'equipment_id' });
+Equipment.hasMany(Request, { foreignKey: 'equipment_id' }); // Defined here to avoid circular dependency
 Request.belongsTo(User, { as: 'requestor', foreignKey: 'requestor_id' });
 Request.belongsTo(User, { as: 'assignedTechnician', foreignKey: 'assigned_technician_id' });
 
