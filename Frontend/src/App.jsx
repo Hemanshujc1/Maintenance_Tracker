@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import EquipmentList from './pages/EquipmentList';
 import EquipmentForm from './pages/EquipmentForm';
-import RequestList from './pages/RequestList';
 import './App.css';
 
-const ProtectedRoute = ({ children }) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        return <Navigate to="/login" replace />;
-    }
+// Public Route wrapper to redirect to dashboard if already logged in
+const PublicRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+    if (loading) return <div>Loading...</div>;
+    if (user) return <Navigate to="/dashboard" replace />;
     return children;
 };
 
@@ -43,7 +42,6 @@ function App() {
                                         <Link to="/" className="nav-brand">Maintenance Tracker</Link>
                                         <div className="nav-links">
                                             <Link to="/equipment">Equipment</Link>
-                                            <Link to="/requests">Requests</Link>
                                         </div>
                                         <button onClick={() => {
                                             localStorage.removeItem('token');
@@ -62,7 +60,6 @@ function App() {
                                         <Link to="/" className="nav-brand">Maintenance Tracker</Link>
                                         <div className="nav-links">
                                             <Link to="/equipment">Equipment</Link>
-                                            <Link to="/requests">Requests</Link>
                                         </div>
                                         <button onClick={() => {
                                             localStorage.removeItem('token');
@@ -71,27 +68,6 @@ function App() {
                                     </nav>
                                     <main className="main-content">
                                         <EquipmentList />
-                                    </main>
-                                </div>
-                            ) : <Navigate to="/login" />
-                        } />
-
-                        <Route path="/requests" element={
-                            isAuthenticated ? (
-                                <div className="dashboard">
-                                    <nav className="navbar">
-                                        <Link to="/" className="nav-brand">Maintenance Tracker</Link>
-                                        <div className="nav-links">
-                                            <Link to="/equipment">Equipment</Link>
-                                            <Link to="/requests">Requests</Link>
-                                        </div>
-                                        <button onClick={() => {
-                                            localStorage.removeItem('token');
-                                            window.location.href = '/login';
-                                        }} className="btn btn-secondary">Logout</button>
-                                    </nav>
-                                    <main className="main-content">
-                                        <RequestList />
                                     </main>
                                 </div>
                             ) : <Navigate to="/login" />

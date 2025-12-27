@@ -1,9 +1,9 @@
+const dotenv = require('dotenv');
+dotenv.config(); // Load env vars first
+
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const sequelize = require('./config/db');
-
-dotenv.config();
 
 const app = express();
 
@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/auth', require('./routes/authRoutes'));
+// Removed duplicate auth route
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/equipment', require('./routes/equipmentRoutes'));
 app.use('/api/requests', require('./routes/requestRoutes'));
@@ -24,6 +24,8 @@ app.get('/', (req, res) => {
 
 // Database Connection and Server Start
 const PORT = process.env.PORT || 5000;
+
+console.log('JWT_SECRET loaded:', !!process.env.JWT_SECRET); 
 
 const startServer = async () => {
   try {
