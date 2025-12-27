@@ -34,8 +34,8 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('MySQL Database connected successfully.');
 
-    // Sync models (force: false prevents data loss)
-    await sequelize.sync({ force: false });
+    // Sync models (alter: true updates schema without data loss)
+    await sequelize.sync({ alter: true });
     console.log('Database synced.');
 
     app.listen(PORT, () => {

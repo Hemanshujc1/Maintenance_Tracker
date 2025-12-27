@@ -11,9 +11,9 @@ const getAllEquipment = async (req, res) => {
         let whereClause = {};
 
         // If user is just an Employee, only show assigned equipment
-        if (req.user.role === 'Employee') {
-            whereClause = { assigned_employee_id: req.user.id };
-        }
+        // if (req.user.role === 'Employee') {
+        //    whereClause = { assigned_employee_id: req.user.id };
+        // }
 
         const equipment = await Equipment.findAll({
             where: whereClause,

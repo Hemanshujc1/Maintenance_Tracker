@@ -34,6 +34,16 @@ const RequestList = () => {
         }
     };
 
+    const handleDurationChange = async (id, duration) => {
+        try {
+            await requestService.updateDuration(id, duration);
+            setRequests(prev => prev.map(r => r.id == id ? { ...r, duration_hours: duration } : r));
+        } catch (error) {
+            console.error("Failed to update duration", error);
+            fetchRequests();
+        }
+    };
+
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-3xl font-bold mb-6 text-gray-800">Maintenance Logic & Requests</h1>
@@ -60,7 +70,11 @@ const RequestList = () => {
             </div>
 
             {viewMode === 'kanban' ? (
-                <KanbanBoard requests={requests} onStatusChange={handleStatusChange} />
+                <KanbanBoard 
+                    requests={requests} 
+                    onStatusChange={handleStatusChange} 
+                    onDurationChange={handleDurationChange}
+                />
             ) : (
                 <div className="bg-white p-4 rounded shadow">
                     <table className="min-w-full">

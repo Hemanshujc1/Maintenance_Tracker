@@ -67,14 +67,14 @@ const EquipmentDetail = () => {
                     </span>
                 </div>
                  
-                 <div className="smart-button">
+                <Link to={`/kanban?equipment_id=${equipment.id}`} className="smart-button" style={{ textDecoration: 'none' }}>
                     <div className="smart-count">
                         {equipment.Requests ? equipment.Requests.length : 0}
                     </div>
                     <div className="smart-label">
                         Maintenance<br/>Requests
                     </div>
-                </div>
+                </Link>
             </div>
 
             {/* Info Grid */}

@@ -55,6 +55,13 @@ const Equipment = sequelize.define('Equipment', {
       model: MaintenanceTeam,
       key: 'id'
     }
+  },
+  default_technician_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: User,
+      key: 'id'
+    }
   }
 }, {
   tableName: 'equipment',
@@ -66,6 +73,7 @@ const Equipment = sequelize.define('Equipment', {
 Equipment.belongsTo(Department, { foreignKey: 'department_id' });
 Equipment.belongsTo(MaintenanceTeam, { foreignKey: 'maintenance_team_id' });
 Equipment.belongsTo(User, { as: 'assignedEmployee', foreignKey: 'assigned_employee_id' });
+Equipment.belongsTo(User, { as: 'defaultTechnician', foreignKey: 'default_technician_id' });
 // Circular dependency handled in Request.js now
 
 module.exports = Equipment;

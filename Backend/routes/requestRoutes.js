@@ -4,7 +4,12 @@ const requestController = require('../controllers/requestController');
 const protect = require('../middleware/authMiddleware');
 const authorize = require('../middleware/roleMiddleware');
 
-router.post('/', requestController.createRequest);
+const upload = require('../middleware/uploadMiddleware');
+
+// Apply protection to all routes
+router.use(protect);
+
+router.post('/', upload.single('image'), requestController.createRequest);
 router.get('/', requestController.getAllRequests);
 router.get('/:id', requestController.getRequestById);
 router.put('/:id/status', requestController.updateRequestStatus);

@@ -3,17 +3,18 @@ import requestService from '../services/requestService';
 import api from '../utils/api';
 import './RequestForm.css';
 
-const RequestForm = ({ onRequestCreated, initialEquipmentId }) => {
+const RequestForm = ({ onRequestCreated, initialEquipmentId, initialDate }) => {
     const [formData, setFormData] = useState({
         subject: '',
         description: '',
-        type: 'Corrective',
+        type: initialDate ? 'Preventive' : 'Corrective',
         priority: 'Medium',
         equipment_id: initialEquipmentId || '',
         requestor_id: 1, 
-        scheduled_date: ''
+        scheduled_date: initialDate || ''
     });
     
+    const [image, setImage] = useState(null);
     const [equipmentList, setEquipmentList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -40,6 +41,10 @@ const RequestForm = ({ onRequestCreated, initialEquipmentId }) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleFileChange = (e) => {
+        setImage(e.target.files[0]);
+    };
+
     const handlePriorityClick = (p) => {
         setFormData({ ...formData, priority: p });
     };
@@ -60,7 +65,18 @@ const RequestForm = ({ onRequestCreated, initialEquipmentId }) => {
         }
 
         try {
-            await requestService.createRequest(formData);
+            const data = new FormData();
+            data.append('subject', formData.subject);
+            data.append('description', formData.description);
+            data.append('type', formData.type);
+            data.append('priority', formData.priority);
+            data.append('equipment_id', formData.equipment_id);
+            data.append('requestor_id', formData.requestor_id);
+            if (formData.scheduled_date) data.append('scheduled_date', formData.scheduled_date);
+            if (image) data.append('image', image);
+
+            await requestService.createRequest(data);
+            
             setFormData({
                 subject: '',
                 description: '',
@@ -70,6 +86,8 @@ const RequestForm = ({ onRequestCreated, initialEquipmentId }) => {
                 requestor_id: 1,
                 scheduled_date: ''
             });
+            setImage(null);
+            
             if (onRequestCreated) onRequestCreated();
         } catch (err) {
             setError('Failed to create request. Please try again.');
@@ -188,6 +206,17 @@ const RequestForm = ({ onRequestCreated, initialEquipmentId }) => {
                         rows="3"
                         placeholder="Describe the issue..."
                         className="form-textarea"
+                    />
+                </div>
+
+                {/* Image Upload */}
+                <div className="form-group">
+                    <label className="form-label">Attach Image (Optional)</label>
+                    <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="form-input"
                     />
                 </div>
 

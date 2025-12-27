@@ -55,3 +55,22 @@ exports.getRequestsPerEquipment = async (req, res) => {
         res.status(500).json({ message: 'Server error fetching equipment reports' });
     }
 };
+
+// Get Requests count per Status
+exports.getRequestsPerStatus = async (req, res) => {
+    try {
+        const report = await Request.findAll({
+            attributes: [
+                'status',
+                [sequelize.fn('COUNT', sequelize.col('id')), 'request_count']
+            ],
+            group: ['status'],
+            raw: true
+        });
+
+        res.json(report);
+    } catch (error) {
+        console.error('Error fetching requests per status:', error);
+        res.status(500).json({ message: 'Server error fetching status reports' });
+    }
+};

@@ -14,14 +14,31 @@ import EquipmentDetail from './pages/EquipmentDetail';
 import RequestList from './pages/RequestList';
 import CalendarPage from './pages/CalendarPage';
 import ReportsPage from './pages/ReportsPage';
+import KanbanBoard from './pages/KanbanBoard';
+import TechnicianDashboard from './pages/TechnicianDashboard';
 import './App.css';
 
 // Public Route wrapper to redirect to dashboard if already logged in
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return <div>Loading...</div>;
-  if (user) return <Navigate to="/dashboard" replace />;
+  if (user) return <Navigate to="/" replace />;
   return children;
+};
+
+// Redirect based on role
+const RoleBasedRedirect = () => {
+  const { user, loading } = useAuth();
+  if (loading) return <div>Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+
+  if (['Admin', 'Manager'].includes(user.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  if (user.role === 'Technician') {
+    return <Navigate to="/technician-dashboard" replace />;
+  }
+  return <Navigate to="/equipment" replace />;
 };
 
 function App() {
@@ -65,6 +82,8 @@ function App() {
             {/* Calendar & Reports Routes */}
             <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician']} />}>
               <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/kanban" element={<KanbanBoard />} />
+              <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
             </Route>
 
             <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
@@ -72,8 +91,8 @@ function App() {
             </Route>
           </Route>
 
-          {/* Redirect root to login (or dashboard if auth handled by PublicRoute logic/ProtectedRoute) */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          {/* Redirect root based on role */}
+          <Route path="/" element={<RoleBasedRedirect />} />
 
           {/* Catch all */}
           <Route path="*" element={<Navigate to="/login" replace />} />

@@ -29,6 +29,15 @@ const Navbar = () => {
                     </Link>
                 )}
 
+                {user?.role === 'Technician' && (
+                    <Link
+                        to="/technician-dashboard"
+                        className={`nav-item ${isActive('/technician-dashboard') ? 'active' : ''}`}
+                    >
+                        My Dashboard
+                    </Link>
+                )}
+
                 <Link
                     to="/equipment"
                     className={`nav-item ${isActive('/equipment') || location.pathname.startsWith('/equipment') ? 'active' : ''}`}

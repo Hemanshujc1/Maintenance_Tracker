@@ -5,6 +5,7 @@ const User = require('../models/User');
 exports.createRequest = async (req, res) => {
     try {
         const { subject, description, type, priority, equipment_id, requestor_id } = req.body;
+        const image_url = req.file ? `/uploads/${req.file.filename}` : null;
 
         const newRequest = await Request.create({
             subject,
@@ -12,8 +13,16 @@ exports.createRequest = async (req, res) => {
             type,
             priority,
             equipment_id,
-            requestor_id
+            requestor_id,
+            image_url
         });
+
+        // Auto-assign default technician if available
+        const equipment = await Equipment.findByPk(equipment_id);
+        if (equipment && equipment.default_technician_id) {
+            newRequest.assigned_technician_id = equipment.default_technician_id;
+            await newRequest.save();
+        }
 
         res.status(201).json(newRequest);
     } catch (error) {
@@ -33,7 +42,7 @@ exports.getAllRequests = async (req, res) => {
         const requests = await Request.findAll({
             where: whereClause,
             include: [
-                { model: Equipment, attributes: ['name', 'serial_number'] },
+                { model: Equipment, attributes: ['name', 'serial_number', 'location'] },
                 { model: User, as: 'requestor', attributes: ['first_name', 'last_name'] },
                 { model: User, as: 'assignedTechnician', attributes: ['first_name', 'last_name'] }
             ],
@@ -80,6 +89,15 @@ exports.updateRequestStatus = async (req, res) => {
         if (status === 'Repaired' && request.status !== 'Repaired') {
             request.completion_date = new Date();
         }
+        
+        // Scrap Logic: If Request is Scrap, Equipment is Scrapped
+        if (status === 'Scrap') {
+             const equipment = await Equipment.findByPk(request.equipment_id);
+             if (equipment) {
+                 equipment.status = 'Scrapped';
+                 await equipment.save();
+             }
+        }
 
         request.status = status;
         await request.save();
@@ -94,10 +112,22 @@ exports.updateRequestStatus = async (req, res) => {
 exports.assignTechnician = async (req, res) => {
     try {
         const { technician_id } = req.body;
-        const request = await Request.findByPk(req.params.id);
+        const request = await Request.findByPk(req.params.id, {
+            include: [{ model: Equipment }]
+        });
 
         if (!request) {
             return res.status(404).json({ message: 'Request not found' });
+        }
+
+        // Validate Technician Team Membership
+        if (request.Equipment && request.Equipment.maintenance_team_id) {
+            const technician = await User.findByPk(technician_id);
+            if (!technician || technician.maintenance_team_id !== request.Equipment.maintenance_team_id) {
+                 return res.status(400).json({ 
+                     message: 'Technician must belong to the maintenance team assigned to this equipment.' 
+                 });
+            }
         }
 
         request.assigned_technician_id = technician_id;

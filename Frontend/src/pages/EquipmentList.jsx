@@ -29,12 +29,19 @@ const EquipmentList = () => {
         }
     };
 
+    const [filterDepartment, setFilterDepartment] = useState('All');
+
     const filterData = () => {
         let data = equipment;
 
         // Status Filter
         if (filterStatus !== 'All') {
             data = data.filter(item => item.status === filterStatus);
+        }
+
+        // Department Filter
+        if (filterDepartment !== 'All') {
+            data = data.filter(item => item.Department && item.Department.name === filterDepartment);
         }
 
         // Search Filter
@@ -87,6 +94,18 @@ const EquipmentList = () => {
                     <option value="Active">Active</option>
                     <option value="Maintenance">Maintenance</option>
                     <option value="Scrapped">Scrapped</option>
+                </select>
+
+                <select 
+                    value={filterDepartment}
+                    onChange={(e) => setFilterDepartment(e.target.value)}
+                    style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
+                >
+                    <option value="All">All Departments</option>
+                     {/* Unique departments from equipment list */}
+                    {[...new Set(equipment.map(item => item.Department ? item.Department.name : null).filter(Boolean))].map(dept => (
+                        <option key={dept} value={dept}>{dept}</option>
+                    ))}
                 </select>
             </div>
             

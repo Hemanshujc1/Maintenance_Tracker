@@ -60,6 +60,10 @@ const Request = sequelize.define('Request', {
     duration_hours: {
         type: DataTypes.DECIMAL(5, 2),
         defaultValue: 0.00
+    },
+    image_url: {
+        type: DataTypes.STRING(255),
+        allowNull: true
     }
 }, {
     tableName: 'maintenance_requests',

@@ -1,67 +1,143 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import './KanbanBoard.css';
 
-const KanbanColumn = ({ status, requests, onDrop, onDragStart }) => {
-    return (
-        <div
-            className="flex-1 bg-gray-100 p-4 rounded-lg min-h-[500px]"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => onDrop(e, status)}
-        >
-            <h3 className="text-lg font-bold mb-4 capitalize">{status.replace('_', ' ')}</h3>
-            <div className="space-y-3">
-                {requests.map(req => (
-                    <div
-                        key={req.id}
-                        draggable
-                        onDragStart={(e) => onDragStart(e, req.id)}
-                        className="bg-white p-3 rounded shadow hover:shadow-md cursor-grab active:cursor-grabbing border-l-4"
-                        style={{
-                            borderLeftColor: req.priority === 'Critical' ? 'red' :
-                                req.priority === 'High' ? 'orange' :
-                                    req.priority === 'Medium' ? 'blue' : 'green'
-                        }}
-                    >
-                        <h4 className="font-semibold text-sm">{req.subject}</h4>
-                        <div className="flex justify-between items-center text-xs text-gray-500 mt-2">
-                            <span>{req.Equipment ? req.Equipment.name : 'Unknown Equipment'}</span>
-                            <span className={`px-2 py-0.5 rounded text-white ${req.type === 'Corrective' ? 'bg-red-500' : 'bg-green-500'
-                                }`}>
-                                {req.type[0]}
-                            </span>
-                        </div>
-                        <div className="text-xs text-gray-400 mt-1">
-                            Technician: {req.assignedTechnician ? req.assignedTechnician.first_name : 'Unassigned'}
-                        </div>
-                    </div>
-                ))}
-                {requests.length === 0 && <p className="text-gray-400 text-center text-sm">No items</p>}
-            </div>
-        </div>
-    );
-};
+const KanbanBoard = ({ requests, onStatusChange, onDurationChange }) => {
+    const [columns, setColumns] = useState({
+        'New': [],
+        'In Progress': [],
+        'Repaired': [],
+        'Scrap': []
+    });
 
-const KanbanBoard = ({ requests, onStatusChange }) => {
-    const statuses = ['New', 'In Progress', 'Repaired', 'Scrap'];
-    const handleDragStart = (e, id) => {
-        e.dataTransfer.setData('requestId', id);
+    useEffect(() => {
+        // Group by status
+        const newCols = {
+            'New': [],
+            'In Progress': [],
+            'Repaired': [],
+            'Scrap': []
+        };
+
+        requests.forEach(req => {
+            if (newCols[req.status]) {
+                newCols[req.status].push(req);
+            } else {
+                newCols['New'].push(req);
+            }
+        });
+        setColumns(newCols);
+    }, [requests]);
+
+    const onDragEnd = (result) => {
+        const { source, destination, draggableId } = result;
+
+        if (!destination) return;
+        if (source.droppableId === destination.droppableId && source.index === destination.index) return;
+
+        // Optimistic UI update logic handled by parent via onStatusChange usually, 
+        // but for smooth DnD we update local state or let parent drive.
+        // Here we just call parent to update data.
+        onStatusChange(draggableId, destination.droppableId);
     };
-    const handleDrop = (e, newStatus) => {
-        const requestId = e.dataTransfer.getData('requestId');
-        if (requestId) {
-            onStatusChange(requestId, newStatus);
-        }
-    };
+
     return (
-        <div className="flex flex-col md:flex-row gap-4 overflow-x-auto pb-4">
-            {statuses.map(status => (
-                <KanbanColumn
-                    key={status}
-                    status={status}
-                    requests={requests.filter(r => r.status === status)}
-                    onDrop={handleDrop}
-                    onDragStart={handleDragStart}
-                />
-            ))}
+        <div className="kanban-container-component">
+            <DragDropContext onDragEnd={onDragEnd}>
+                <div className="kanban-board">
+                    {Object.entries(columns).map(([columnId, tasks]) => (
+                        <Droppable key={columnId} droppableId={columnId}>
+                            {(provided, snapshot) => (
+                                <div
+                                    className={`kanban-column ${columnId.toLowerCase().replace(' ', '-')}`}
+                                    ref={provided.innerRef}
+                                    {...provided.droppableProps}
+                                >
+                                    <h3 className="column-title">{columnId} <span className="task-count">{tasks.length}</span></h3>
+                                    <div className="task-list">
+                                        {tasks.map((task, index) => (
+                                            <Draggable key={task.id} draggableId={String(task.id)} index={index}>
+                                                {(provided, snapshot) => (
+                                                    <div
+                                                        className="kanban-card"
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                        style={{
+                                                            ...provided.draggableProps.style,
+                                                            opacity: snapshot.isDragging ? 0.8 : 1
+                                                        }}
+                                                    >
+                                                        <div className={`priority-strip ${task.priority.toLowerCase()}`}></div>
+                                                        <div className="card-content">
+                                                            <h4>{task.subject}</h4>
+                                                            <div className="card-meta">
+                                                                <span className="equipment-name">{task.Equipment ? task.Equipment.name : 'Unknown Equipment'}</span>
+                                                            </div>
+                                                            <div className="card-footer" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
+                                                                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                                                                    <div className="footer-left" style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+                                                                        <select 
+                                                                            value={task.status}
+                                                                            onChange={(e) => onStatusChange(String(task.id), e.target.value)}
+                                                                            onClick={(e) => e.stopPropagation()} 
+                                                                            className="status-select-mini"
+                                                                            style={{ fontSize: '0.8rem', padding: '2px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                                                        >
+                                                                            <option value="New">New</option>
+                                                                            <option value="In Progress">In Progress</option>
+                                                                            <option value="Repaired">Repaired</option>
+                                                                            <option value="Scrap">Scrap</option>
+                                                                        </select>
+                                                                        {task.image_url && <span title="Has Image">📷</span>}
+                                                                    </div>
+                                                                    {task.assignedTechnician && (
+                                                                        <div className="tech-avatar" title={task.assignedTechnician.first_name}>
+                                                                            {task.assignedTechnician.first_name[0]}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                {/* Overdue Indicator */}
+                                                                {task.scheduled_date && new Date(task.scheduled_date) < new Date() && task.status !== 'Repaired' && task.status !== 'Scrap' && (
+                                                                    <div className="overdue-badge" style={{ color: 'white', background: '#ef4444', fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                                                                        OVERDUE
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Duration Input */}
+                                                                {(task.status === 'In Progress' || task.status === 'Repaired') && (
+                                                                    <div className="duration-input" style={{ width: '100%' }}>
+                                                                       <input
+                                                                            type="number"
+                                                                            placeholder="Hrs"
+                                                                            defaultValue={task.duration_hours || ''}
+                                                                            onBlur={(e) => {
+                                                                                const val = e.target.value;
+                                                                                if (val && val !== String(task.duration_hours) && onDurationChange) {
+                                                                                    onDurationChange(String(task.id), val);
+                                                                                }
+                                                                            }}
+                                                                            onClick={(e) => e.stopPropagation()}
+                                                                            style={{ width: '60px', fontSize: '0.8rem', padding: '2px', border: '1px solid #ddd', borderRadius: '4px' }}
+                                                                        />
+                                                                        <span style={{ fontSize: '0.75rem', color: '#666', marginLeft: '5px' }}>hrs spent</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </div>
+                                </div>
+                            )}
+                        </Droppable>
+                    ))}
+                </div>
+            </DragDropContext>
         </div>
     );
 };
