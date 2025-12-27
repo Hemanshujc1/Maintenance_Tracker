@@ -1,6 +1,9 @@
 const Equipment = require('../models/Equipment');
 
 const Request = require('../models/Request');
+const Department = require('../models/Department');
+const MaintenanceTeam = require('../models/MaintenanceTeam');
+const User = require('../models/User');
 
 // Get all equipment
 const getAllEquipment = async (req, res) => {
@@ -31,7 +34,18 @@ const getAllEquipment = async (req, res) => {
 const getEquipmentById = async (req, res) => {
     const { id } = req.params;
     try {
-        const equipment = await Equipment.findByPk(id);
+        const equipment = await Equipment.findByPk(id, {
+            include: [
+                { model: Department },
+                { model: MaintenanceTeam },
+                { model: User, as: 'assignedEmployee', attributes: ['id', 'first_name', 'last_name'] },
+                { 
+                    model: Request, 
+                    include: [{ model: User, as: 'assignedTechnician', attributes: ['first_name', 'last_name'] }],
+                    order: [['created_at', 'DESC']]
+                }
+            ]
+        });
         if (!equipment) {
             return res.status(404).json({ error: 'Equipment not found' });
         }

@@ -103,8 +103,12 @@ const EquipmentList = () => {
                 </thead>
                 <tbody>
                     {filteredEquipment.map(item => (
-                        <tr key={item.id}>
-                            <td>{item.name}</td>
+                        <tr key={item.id} className="hover:bg-gray-50">
+                            <td>
+                                <Link to={`/equipment/${item.id}`} className="text-blue-600 font-medium hover:underline">
+                                    {item.name}
+                                </Link>
+                            </td>
                             <td>{item.serial_number}</td>
                             <td>{item.location || '-'}</td>
                             <td>
@@ -125,7 +129,7 @@ const EquipmentList = () => {
                                 </span>
                             </td>
                             <td>
-                                <Link to={`/equipment/${item.id}`} className="btn btn-secondary">Edit</Link>
+                                <Link to={`/equipment/${item.id}/edit`} className="btn btn-secondary">Edit</Link>
                                 {item.status !== 'Scrapped' && (
                                     <button onClick={() => handleScrap(item.id)} className="btn btn-danger">
                                         Scrap
