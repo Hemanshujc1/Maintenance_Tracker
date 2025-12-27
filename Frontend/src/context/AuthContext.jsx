@@ -6,33 +6,28 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const loadUser = async () => {
-            if (token) {
-                try {
-                    // Ideally endpoint to get current user, for now using stored data or nothing
-                    // If you implement /auth/me, fetch it here.
-                    // For now, we assume valid token if present, real validation happens on API calls usually
-                    // Or decode token payload if needed without verification
-                } catch (error) {
-                    console.error(error);
-                    logout();
-                }
-            }
-            setLoading(false);
-        };
-
-        loadUser();
+        // Build a mechanism to valid token if needed, for now just sync state
+        // If token is missing but user exists, clear user
+        if (!token) {
+            setUser(null);
+            localStorage.removeItem('user');
+        }
+        setLoading(false);
     }, [token]);
 
     const login = async (email, password) => {
         try {
             const res = await api.post('/auth/login', { email, password });
             localStorage.setItem('token', res.data.token);
+            localStorage.setItem('user', JSON.stringify(res.data.user)); // Persist user
             setToken(res.data.token);
             setUser(res.data.user);
             return { success: true };
@@ -50,7 +45,6 @@ export const AuthProvider = ({ children }) => {
         }
         try {
             const res = await api.post('/auth/register', { name, email, password });
-            // Depending on flow, maybe auto-login or ask to login
             return { success: true };
         } catch (error) {
             return {
@@ -62,6 +56,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setToken(null);
         setUser(null);
     };

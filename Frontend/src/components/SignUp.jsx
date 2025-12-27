@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../App.css';
 
-const SignUp = ({ onSwitchToLogin }) => {
+const SignUp = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -10,6 +11,7 @@ const SignUp = ({ onSwitchToLogin }) => {
         confirmPassword: ''
     });
     const { register } = useAuth();
+    const navigate = useNavigate();
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -32,7 +34,7 @@ const SignUp = ({ onSwitchToLogin }) => {
         if (result.success) {
             setSuccess('Registration successful! Please sign in.');
             setTimeout(() => {
-                onSwitchToLogin();
+                navigate('/login');
             }, 2000);
         } else {
             setError(result.message);
@@ -44,6 +46,9 @@ const SignUp = ({ onSwitchToLogin }) => {
             <div className="login-card">
                 <h2 className="login-title">Create Account</h2>
                 <p className="login-subtitle">Sign up to get started</p>
+
+                {error && <p style={{ color: 'red', textAlign: 'center', marginBottom: '1rem' }}>{error}</p>}
+                {success && <p style={{ color: '#4ade80', textAlign: 'center', marginBottom: '1rem' }}>{success}</p>}
 
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
@@ -98,7 +103,7 @@ const SignUp = ({ onSwitchToLogin }) => {
 
                     <div className="login-links" style={{ justifyContent: 'center', marginTop: '1.5rem' }}>
                         <span style={{ color: '#94a3b8', marginRight: '0.5rem' }}>Already have an account?</span>
-                        <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToLogin(); }} className="signup-link">Sign In</a>
+                        <Link to="/login" className="signup-link">Sign In</Link>
                     </div>
                 </form>
             </div>

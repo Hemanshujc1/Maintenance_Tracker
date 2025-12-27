@@ -19,6 +19,7 @@ body {
     min-height: 100vh;
 }
 
+/* --- Authentication (Login/Signup) --- */
 .login-container {
     display: flex;
     align-items: center;
@@ -135,7 +136,7 @@ body {
     color: #4f46e5;
 }
 
-/* Equipment List Styling matching Light Theme */
+/* Equipment List & Navbar Styling */
 .navbar {
     background-color: #fff;
     padding: 1rem 2rem;
@@ -254,4 +255,173 @@ body {
     border-radius: 8px;
     margin-bottom: 16px;
     border: 1px solid #fecaca;
+}
+
+/* --- Remote Dashboard Styles (Merged) --- */
+.dashboard-container {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.dashboard-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-nav h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.logout-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.logout-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #cbd5e1;
+}
+
+.dashboard-content {
+    padding: 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-content h2 {
+    margin-bottom: 2rem;
+    color: #1e293b;
+    font-size: 1.5rem;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+}
+
+.user-table th,
+.user-table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.user-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.user-table tr:hover {
+    background: #f8fafc;
+}
+
+.role-select {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+}
+
+.role-select:focus {
+    outline: none;
+    border-color: #6366f1;
+    ring: 2px solid rgba(99, 102, 241, 0.1);
+}
+
+.role-select:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.status-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}
+
+.status-badge.active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.action-btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.action-btn.block {
+    background: white;
+    border-color: #fca5a5;
+    color: #ef4444;
+}
+
+.action-btn.block:hover {
+    background: #fef2f2;
+}
+
+.action-btn.activate {
+    background: white;
+    border-color: #86efac;
+    color: #22c55e;
+}
+
+.action-btn.activate:hover {
+    background: #f0fdf4;
 }

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../App.css';
 
-const Login = ({ onSwitchToSignUp }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +16,7 @@ const Login = ({ onSwitchToSignUp }) => {
     const result = await login(email, password);
     if (result.success) {
       console.log('Login successful');
-      window.location.href = '/'; // Force reload/redirect to update auth state
+      navigate('/'); // Redirect to home/equipment dashboard
     } else {
       setError(result.message);
     }
@@ -25,6 +27,8 @@ const Login = ({ onSwitchToSignUp }) => {
       <div className="login-card">
         <h2 className="login-title">Welcome Back</h2>
         <p className="login-subtitle">Please sign in to continue</p>
+
+        {error && <p style={{ color: 'red', textAlign: 'center', marginBottom: '1rem' }}>{error}</p>}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -54,8 +58,8 @@ const Login = ({ onSwitchToSignUp }) => {
           <button type="submit" className="signin-btn">Sign In</button>
 
           <div className="login-links">
-            <a href="#" className="forgot-password">Forget Password ?</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToSignUp(); }} className="signup-link">Sign Up</a>
+            <Link to="/forgot-password" className="forgot-password">Forget Password ?</Link>
+            <Link to="/signup" className="signup-link">Sign Up</Link>
           </div>
         </form>
       </div>
