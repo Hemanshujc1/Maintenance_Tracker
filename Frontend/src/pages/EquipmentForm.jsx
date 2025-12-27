@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const EquipmentForm = () => {
@@ -30,7 +30,7 @@ const EquipmentForm = () => {
 
     const fetchEquipmentDetails = async () => {
         try {
-            const response = await axios.get(`http://localhost:5001/api/equipment/${id}`);
+            const response = await api.get(`/equipment/${id}`);
             const data = response.data;
             // Format dates for input fields (YYYY-MM-DD)
             if (data.purchase_date) data.purchase_date = data.purchase_date.split('T')[0];
@@ -53,9 +53,9 @@ const EquipmentForm = () => {
 
         try {
             if (isEditMode) {
-                await axios.put(`http://localhost:5001/api/equipment/${id}`, formData);
+                await api.put(`/equipment/${id}`, formData);
             } else {
-                await axios.post('http://localhost:5001/api/equipment', formData);
+                await api.post('/equipment', formData);
             }
             navigate('/equipment');
         } catch (err) {

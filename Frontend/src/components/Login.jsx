@@ -14,6 +14,7 @@ const Login = ({ onSwitchToSignUp }) => {
     const result = await login(email, password);
     if (result.success) {
       console.log('Login successful');
+      window.location.href = '/'; // Force reload/redirect to update auth state
     } else {
       setError(result.message);
     }

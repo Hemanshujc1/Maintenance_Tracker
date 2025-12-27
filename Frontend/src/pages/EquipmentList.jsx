@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { Link } from 'react-router-dom';
 
 const EquipmentList = () => {
@@ -13,7 +13,7 @@ const EquipmentList = () => {
 
     const fetchEquipment = async () => {
         try {
-            const response = await axios.get('http://localhost:5001/api/equipment');
+            const response = await api.get('/equipment');
             setEquipment(response.data);
             setLoading(false);
         } catch (err) {
@@ -25,7 +25,7 @@ const EquipmentList = () => {
     const handleScrap = async (id) => {
         if (!window.confirm('Are you sure you want to scrap this equipment?')) return;
         try {
-            await axios.put(`http://localhost:5001/api/equipment/${id}/scrap`);
+            await api.put(`/equipment/${id}/scrap`);
             fetchEquipment(); // Refresh list
         } catch (err) {
             alert('Failed to scrap equipment');
