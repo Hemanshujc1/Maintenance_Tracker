@@ -16,6 +16,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/equipment', require('./routes/equipmentRoutes'));
+app.use('/api/requests', require('./routes/requestRoutes'));
 
 app.get('/', (req, res) => {
   res.send('API is running...');
@@ -28,7 +29,7 @@ const startServer = async () => {
   try {
     await sequelize.authenticate();
     console.log('MySQL Database connected successfully.');
-    
+
     // Sync models (force: false prevents data loss)
     await sequelize.sync({ force: false });
     console.log('Database synced.');
