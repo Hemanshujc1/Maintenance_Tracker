@@ -105,7 +105,7 @@ A comprehensive **Maintenance Management System (MMS)** designed to track assets
     ```bash
     npm start
     ```
-    _The server runs on `http://localhost:5000` and will automatically sync tables._
+    _The server runs on `http://localhost:5001` and will automatically sync tables._
 
 ### 3. Frontend Setup
 
