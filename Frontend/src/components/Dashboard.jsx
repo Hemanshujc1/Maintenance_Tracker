@@ -49,12 +49,36 @@ const Dashboard = () => {
 
     if (loading) return <div className="dashboard-container">Loading...</div>;
 
+    // Calculate Stats
+    const totalUsers = users.length;
+    const activeUsers = users.filter(u => u.status === 'Active').length;
+    const technicians = users.filter(u => u.role === 'Technician').length;
+    const employees = users.filter(u => u.role === 'Employee').length;
+
     return (
         <>
+            <div className="dashboard-stats">
+                <div className="stat-card blue">
+                    <h3>Total Users</h3>
+                    <p>{totalUsers}</p>
+                </div>
+                <div className="stat-card green">
+                    <h3>Active Users</h3>
+                    <p>{activeUsers}</p>
+                </div>
+                <div className="stat-card orange">
+                    <h3>Technicians</h3>
+                    <p>{technicians}</p>
+                </div>
+                <div className="stat-card purple">
+                    <h3>Employees</h3>
+                    <p>{employees}</p>
+                </div>
+            </div>
+
             <h2>User Management</h2>
             <div className="table-responsive">
                 <table className="user-table">
-                    {/* ... table content remains same ... */}
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -74,10 +98,11 @@ const Dashboard = () => {
                                         value={u.role}
                                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
                                         className="role-select"
-                                        disabled={user.id === u.id}
+                                        disabled={user.id === u.id || (user.role === 'Manager' && (u.role === 'Admin' || u.role === 'Manager'))}
                                     >
-                                        <option value="Admin">Admin</option>
-                                        <option value="Manager">Manager</option>
+                                        {/* Managers cannot promote to Admin or Manager */}
+                                        {user.role === 'Admin' && <option value="Admin">Admin</option>}
+                                        {user.role === 'Admin' && <option value="Manager">Manager</option>}
                                         <option value="Technician">Technician</option>
                                         <option value="Employee">Employee</option>
                                     </select>
@@ -86,7 +111,8 @@ const Dashboard = () => {
                                     <span className={`status-badge ${u.status.toLowerCase()}`}>{u.status}</span>
                                 </td>
                                 <td>
-                                    {user.id !== u.id && (
+                                    {/* Managers cannot block Admins or other Managers (though RBAC filters them out mostly) */}
+                                    {user.id !== u.id && (user.role === 'Admin' || (user.role === 'Manager' && u.role !== 'Admin' && u.role !== 'Manager')) && (
                                         <button
                                             onClick={() => handleStatusChange(u.id, u.status)}
                                             className={`action-btn ${u.status === 'Active' ? 'block' : 'activate'}`}

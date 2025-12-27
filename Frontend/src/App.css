@@ -10,8 +10,10 @@ body {
     font-family: 'Outfit', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #f8fafc; /* Slate-50 */
-    color: #1e293b; /* Slate-800 */
+    background-color: #f8fafc;
+    /* Slate-50 */
+    color: #1e293b;
+    /* Slate-800 */
 }
 
 .app {
@@ -186,7 +188,8 @@ body {
     overflow: hidden;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     padding: 16px;
     text-align: left;
     border-bottom: 1px solid #f1f5f9;
@@ -244,9 +247,32 @@ body {
     background-color: #dc2626;
 }
 
-.status-active { color: #16a34a; font-weight: 600; background: #dcfce7; padding: 4px 8px; border-radius: 9999px; font-size: 0.75rem; }
-.status-maintenance { color: #d97706; font-weight: 600; background: #fef3c7; padding: 4px 8px; border-radius: 9999px; font-size: 0.75rem; }
-.status-scrapped { color: #dc2626; font-weight: 600; background: #fee2e2; padding: 4px 8px; border-radius: 9999px; font-size: 0.75rem; }
+.status-active {
+    color: #16a34a;
+    font-weight: 600;
+    background: #dcfce7;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+}
+
+.status-maintenance {
+    color: #d97706;
+    font-weight: 600;
+    background: #fef3c7;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+}
+
+.status-scrapped {
+    color: #dc2626;
+    font-weight: 600;
+    background: #fee2e2;
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+}
 
 .error {
     color: #b91c1c;
@@ -425,6 +451,7 @@ body {
 .action-btn.activate:hover {
     background: #f0fdf4;
 }
+
 /* Additions for Navbar and Table Consistency */
 .nav-links-container {
     display: flex;
@@ -455,9 +482,11 @@ body {
 /* Ensure 'table' class (used in EquipmentList) looks good */
 .table {
     width: 100%;
-    border-collapse: collapse; /* Changed from separate to match user-table */
+    border-collapse: collapse;
+    /* Changed from separate to match user-table */
     background: #fff;
-    border-radius: 12px; /* Needs overflow hidden on container usually */
+    border-radius: 12px;
+    /* Needs overflow hidden on container usually */
     overflow: hidden;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
 }
@@ -469,12 +498,14 @@ body {
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
-    padding: 1rem 1.5rem; /* Match user-table padding */
+    padding: 1rem 1.5rem;
+    /* Match user-table padding */
     border-bottom: 1px solid #f1f5f9;
 }
 
 .table td {
-    padding: 1rem 1.5rem; /* Match user-table padding */
+    padding: 1rem 1.5rem;
+    /* Match user-table padding */
     border-bottom: 1px solid #f1f5f9;
     color: #1e293b;
 }
@@ -485,4 +516,53 @@ body {
 
 .table tr:last-child td {
     border-bottom: none;
+}
+
+/* Dashboard Stats */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-card h3 {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card p {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.stat-card.blue {
+    border-left: 4px solid #6366f1;
+}
+
+.stat-card.green {
+    border-left: 4px solid #22c55e;
+}
+
+.stat-card.orange {
+    border-left: 4px solid #f97316;
+}
+
+.stat-card.purple {
+    border-left: 4px solid #a855f7;
 }

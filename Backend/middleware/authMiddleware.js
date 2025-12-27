@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-module.exports = function (req, res, next) {
+const protect = (req, res, next) => {
   // Get token from header
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
@@ -18,3 +18,14 @@ module.exports = function (req, res, next) {
     res.status(401).json({ message: 'Token is not valid' });
   }
 };
+
+const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ message: `Role ${req.user ? req.user.role : 'Unknown'} is not authorized` });
+    }
+    next();
+  };
+};
+
+module.exports = { protect, authorize };
