@@ -1,10 +1,12 @@
-const { pool } = require('../config/db');
+const Equipment = require('../models/Equipment');
 
 // Get all equipment
 const getAllEquipment = async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM equipment ORDER BY created_at DESC');
-        res.json(rows);
+        const equipment = await Equipment.findAll({
+            order: [['created_at', 'DESC']]
+        });
+        res.json(equipment);
     } catch (err) {
         console.error('Error fetching equipment:', err);
         res.status(500).json({ error: 'Failed to fetch equipment' });
@@ -15,11 +17,11 @@ const getAllEquipment = async (req, res) => {
 const getEquipmentById = async (req, res) => {
     const { id } = req.params;
     try {
-        const [rows] = await pool.query('SELECT * FROM equipment WHERE id = ?', [id]);
-        if (rows.length === 0) {
+        const equipment = await Equipment.findByPk(id);
+        if (!equipment) {
             return res.status(404).json({ error: 'Equipment not found' });
         }
-        res.json(rows[0]);
+        res.json(equipment);
     } catch (err) {
         console.error('Error fetching equipment:', err);
         res.status(500).json({ error: 'Failed to fetch equipment details' });
@@ -28,41 +30,12 @@ const getEquipmentById = async (req, res) => {
 
 // Create new equipment
 const createEquipment = async (req, res) => {
-    const {
-        name,
-        serial_number,
-        description,
-        purchase_date,
-        warranty_expiry,
-        location,
-        status,
-        department_id,
-        assigned_employee_id,
-        maintenance_team_id
-    } = req.body;
-
     try {
-        const [result] = await pool.query(
-            `INSERT INTO equipment 
-            (name, serial_number, description, purchase_date, warranty_expiry, location, status, department_id, assigned_employee_id, maintenance_team_id) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                name,
-                serial_number,
-                description,
-                purchase_date || null,
-                warranty_expiry || null,
-                location,
-                status || 'Active',
-                department_id || null,
-                assigned_employee_id || null,
-                maintenance_team_id || null
-            ]
-        );
-        res.status(201).json({ id: result.insertId, message: 'Equipment created successfully' });
+        const equipment = await Equipment.create(req.body);
+        res.status(201).json({ id: equipment.id, message: 'Equipment created successfully', equipment });
     } catch (err) {
         console.error('Error creating equipment:', err);
-        if (err.code === 'ER_DUP_ENTRY') {
+        if (err.name === 'SequelizeUniqueConstraintError') {
             return res.status(400).json({ error: 'Serial number already exists' });
         }
         res.status(500).json({ error: 'Failed to create equipment' });
@@ -72,47 +45,17 @@ const createEquipment = async (req, res) => {
 // Update equipment
 const updateEquipment = async (req, res) => {
     const { id } = req.params;
-    const {
-        name,
-        serial_number,
-        description,
-        purchase_date,
-        warranty_expiry,
-        location,
-        status,
-        department_id,
-        assigned_employee_id,
-        maintenance_team_id
-    } = req.body;
-
     try {
-        const [result] = await pool.query(
-            `UPDATE equipment SET 
-            name = ?, serial_number = ?, description = ?, purchase_date = ?, warranty_expiry = ?, location = ?, status = ?, department_id = ?, assigned_employee_id = ?, maintenance_team_id = ? 
-            WHERE id = ?`,
-            [
-                name,
-                serial_number,
-                description,
-                purchase_date || null,
-                warranty_expiry || null,
-                location,
-                status,
-                department_id || null,
-                assigned_employee_id || null,
-                maintenance_team_id || null,
-                id
-            ]
-        );
-
-        if (result.affectedRows === 0) {
+        const equipment = await Equipment.findByPk(id);
+        if (!equipment) {
             return res.status(404).json({ error: 'Equipment not found' });
         }
 
-        res.json({ message: 'Equipment updated successfully' });
+        await equipment.update(req.body);
+        res.json({ message: 'Equipment updated successfully', equipment });
     } catch (err) {
         console.error('Error updating equipment:', err);
-        if (err.code === 'ER_DUP_ENTRY') {
+        if (err.name === 'SequelizeUniqueConstraintError') {
             return res.status(400).json({ error: 'Serial number already exists' });
         }
         res.status(500).json({ error: 'Failed to update equipment' });
@@ -123,15 +66,12 @@ const updateEquipment = async (req, res) => {
 const scrapEquipment = async (req, res) => {
     const { id } = req.params;
     try {
-        const [result] = await pool.query(
-            'UPDATE equipment SET status = ? WHERE id = ?',
-            ['Scrapped', id]
-        );
-
-        if (result.affectedRows === 0) {
+        const equipment = await Equipment.findByPk(id);
+        if (!equipment) {
             return res.status(404).json({ error: 'Equipment not found' });
         }
 
+        await equipment.update({ status: 'Scrapped' });
         res.json({ message: 'Equipment marked as scrapped' });
     } catch (err) {
         console.error('Error scrapping equipment:', err);
