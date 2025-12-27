@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import EquipmentList from './pages/EquipmentList';
 import EquipmentForm from './pages/EquipmentForm';
+import RequestList from './pages/RequestList';
 import './App.css';
 
 // Public Route wrapper to redirect to dashboard if already logged in

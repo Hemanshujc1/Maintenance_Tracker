@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 // Database Connection and Server Start
 const PORT = process.env.PORT || 5000;
 
-console.log('JWT_SECRET loaded:', !!process.env.JWT_SECRET); 
+console.log('JWT_SECRET loaded:', !!process.env.JWT_SECRET);
 
 const startServer = async () => {
   try {
