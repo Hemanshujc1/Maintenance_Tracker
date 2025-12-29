@@ -1,310 +1,207 @@
+# 🛠️ Maintenance Tracker
 
+A comprehensive **Maintenance Management System (MMS)** designed to track assets, manage maintenance teams, and streamline repair workflows. This application facilitates communication between employees, technicians, and managers to ensure equipment uptime and efficiency.
 
-## 📌 Project Overview
+## 🚀 Features
 
-**Maintenance Tracker** is a comprehensive **Maintenance Management System (MMS)** designed to help organizations track their assets and efficiently manage maintenance activities.
+### 1. 🏭 Equipment Management
 
-The system focuses on connecting three critical elements:
+- **Asset Tracking**: Centralized database of all machinery and equipment.
+- **Detailed Records**: Track serial numbers, locations, warranty expiry, and purchase dates.
+- **Smart Categorization**: Group equipment by Department.
+- **Team Assignment**: Link equipment to specific Maintenance Teams and default Technicians.
+- **Smart Buttons**: Quick access to maintenance history directly from the equipment detail page.
 
-> **Equipment (what needs maintenance)**
-> **Maintenance Teams (who perform the work)**
-> **Maintenance Requests (the work itself)**
+### 2. 🔧 Maintenance Requests Workflow
 
-This project aims to replicate a **smart, Odoo-like maintenance module** with automation, workflow-driven processes, and rich UI interactions.
+- **Request Creation**: Easily report issues (Corrective) or schedule checkups (Preventive).
+- **Image Upload**: Attach photos of breakdowns for better context.
+- **Auto-Assignment**: Correctly routes requests to the responsible maintenance team/technician based on the equipment settings.
+- **Prioritization**: Set priority levels (Low, Medium, High, Critical).
+- **Status Tracking**:
+  - **New**: Pending acknowledgement.
+  - **In Progress**: Technician is working on it.
+  - **Repaired**: Work completed.
+  - **Scrap**: Equipment deemed unrepairable.
 
-📄 *Reference Document:* Project requirements are derived from the official specification PDF 
+### 3. 📋 Kanban Board
 
----
+- **Visual Workflow**: Drag-and-drop interface to move requests between stages.
+- **Overdue Indicators**: "OVERDUE" badges for tasks past their scheduled date.
+- **Time Logging**: Log duration (hours spent) directly on the card.
+- **Filtering**: Filter by specific equipment contexts.
 
-## 🎯 Objective
+### 4. 📅 Calendar & Scheduling
 
-Develop a system that allows:
+- **Preventive Maintenance**: Visual calendar view for planned maintenance tasks.
+- **Interactive**: Click dates to schedule new requests.
+- **Smart Views**: Switch between Month, Week, and Day views.
+- **Event Details**: Events show Equipment Name, Location, and Subject.
 
-* Centralized tracking of company assets
-* Assignment of assets to maintenance teams
-* Creation, scheduling, execution, and reporting of maintenance work
-* Clear lifecycle management of maintenance requests
+### 5. 👤 Role-Based Access Control (RBAC)
 
----
+- **Admin**: Full system access, user management, and configuration.
+- **Manager**: Can manage teams, assign tasks, and view reports.
+- **Technician**: Dedicated **Technician Dashboard** to view assigned tasks and log work.
+- **Employee**: Restricted view to report issues on their assigned equipment.
 
-## 🧠 Core Philosophy
+### 6. 📊 Reports & Insights
 
-> **A maintenance request should automatically “know”:**
-
-* Which equipment is affected
-* Which team is responsible
-* Who can work on it
-* What stage it is in
-* Whether it is overdue or completed
-
-The system must be **intelligent, automated, and user-friendly**.
-
----
-
-## 🧩 Key Functional Modules
-
----
-
-## 1️⃣ Equipment Management
-
-The **Equipment module** acts as the master database for all company assets.
-
-### 🔧 Purpose
-
-* Track all machines, vehicles, laptops, and tools
-* Maintain ownership, responsibility, and technical details
-
-### 📋 Equipment Features
-
-#### Equipment Tracking
-
-Equipment must be searchable and groupable by:
-
-* **Department**
-  *Example: A CNC Machine belongs to the “Production” department*
-* **Employee**
-  *Example: A Laptop belongs to “John Doe”*
-
-#### Responsibility Assignment
-
-* Every equipment item must:
-
-  * Be linked to **one Maintenance Team**
-  * Have a **default technician assigned**
-
-#### Mandatory Equipment Fields
-
-| Field                | Description                    |
-| -------------------- | ------------------------------ |
-| Equipment Name       | Human-readable asset name      |
-| Serial Number        | Unique identifier              |
-| Purchase Date        | Date of acquisition            |
-| Warranty Information | Warranty validity              |
-| Location             | Physical location of the asset |
-| Department           | Owning department              |
-| Assigned Employee    | Optional personal ownership    |
-| Maintenance Team     | Responsible team               |
+- **Admin Dashboard**: Live statistics and charts showing system health.
+- **Performance Metrics**: Bar charts for Team Workload and Pie charts for Request Status distribution.
+- **Breakdown Analysis**: Identification of top failing equipment.
 
 ---
 
-## 2️⃣ Maintenance Team Management
+## 💻 Tech Stack
 
-The **Maintenance Team module** defines who can perform maintenance work.
+### Frontend
 
-### 👥 Team Structure
+- **React.js**: Component-based UI.
+- **Vite**: Fast build tool and dev server.
+- **React Router**: Navigation and protected routes.
+- **Axios**: HTTP client for API communication.
+- **Recharts**: Data visualization.
+- **React Big Calendar**: Planning and scheduling interface.
+- **Hello Pangea DnD**: Drag-and-drop Kanban board.
 
-Each team consists of:
+### Backend
 
-* **Team Name**
-  *Examples: Mechanics, Electricians, IT Support*
-* **Team Members (Technicians)**
-  Linked system users
-
-### 🔐 Workflow Logic
-
-* When a maintenance request is created:
-
-  * Only technicians belonging to the assigned team can pick up or work on it
-  * Prevents unauthorized task execution
-
----
-
-## 3️⃣ Maintenance Requests (Core Transaction Module)
-
-The **Maintenance Request module** manages the entire lifecycle of maintenance jobs.
+- **Node.js & Express**: RESTful API server.
+- **Sequelize ORM**: Database interaction and modeling.
+- **MySQL**: Relational database.
+- **Multer**: File upload handling.
+- **JSON Web Tokens (JWT)**: Secure authentication.
 
 ---
 
-### 🔄 Request Types
+## 🛠️ Installation & Setup
 
-| Type           | Description                    |
-| -------------- | ------------------------------ |
-| **Corrective** | Unplanned repairs (Breakdowns) |
-| **Preventive** | Planned routine maintenance    |
+### Prerequisites
 
----
+- Node.js (v14+)
+- MySQL Server
 
-### 🧾 Request Fields
+### 1. Database Setup
 
-| Field               | Description                             |
-| ------------------- | --------------------------------------- |
-| Subject             | Issue description (e.g., “Leaking Oil”) |
-| Equipment           | Affected equipment                      |
-| Maintenance Team    | Auto-filled from equipment              |
-| Request Type        | Corrective / Preventive                 |
-| Scheduled Date      | Planned execution date                  |
-| Duration            | Actual hours spent                      |
-| Assigned Technician | Who is working                          |
-| Status / Stage      | Workflow stage                          |
+1.  Open your MySQL client (Workbench, CLI, etc.).
+2.  Create a new database:
+    ```sql
+    CREATE DATABASE maintenance_db;
+    ```
+3.  Configure the database credentials in `Backend/config/db.js` (or `.env` if configured).
 
----
+### 2. Backend Setup
 
-## 🔁 Functional Workflows
+1.  Navigate to the backend directory:
+    ```bash
+    cd Backend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the server:
+    ```bash
+    npm start
+    ```
+    _The server runs on `http://localhost:5001` and will automatically sync tables._
 
----
+### 3. Frontend Setup
 
-## 🔴 Flow 1: Breakdown (Corrective Maintenance)
-
-### Step-by-Step Process
-
-1. **Request Creation**
-
-   * Any user can raise a maintenance request
-
-2. **Auto-Fill Logic**
-
-   * When equipment is selected:
-
-     * Maintenance Team is auto-populated
-     * Equipment category is fetched automatically
-
-3. **Initial State**
-
-   * Request starts in **New**
-
-4. **Assignment**
-
-   * Manager or technician assigns themselves
-
-5. **Execution**
-
-   * Status changes to **In Progress**
-
-6. **Completion**
-
-   * Technician records:
-
-     * Hours Spent (Duration)
-   * Status moves to **Repaired**
+1.  Navigate to the frontend directory:
+    ```bash
+    cd Frontend
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Start the development server:
+    ```bash
+    npm run dev
+    ```
+    _Typically runs on `http://localhost:5173`._
 
 ---
 
-## 🟢 Flow 2: Routine Checkup (Preventive Maintenance)
+## 📖 Usage Guide
 
-### Step-by-Step Process
+### Default Roles (Seed Data)
 
-1. **Scheduling**
+_(If seed data script is run)_
 
-   * Manager creates a Preventive request
+- **Admin**: Full access.
+- **Manager**: Operational access.
+- **Technician**: Task execution.
+- **Employee**: Request submission.
 
-2. **Date Selection**
+### Key Workflows
 
-   * Scheduled Date is set (e.g., “Next Monday”)
+#### 1. Reporting a Breakdown
 
-3. **Calendar Visibility**
+1.  Log in as **Employee** or **Manager**.
+2.  Go to **Equipment List**.
+3.  Select an asset and click **"Request Maintenance"**.
+4.  Fill in details (Subject, Description) and upload an image.
+5.  Submit.
 
-   * Request appears in the **Calendar View**
-   * Technician sees upcoming maintenance tasks
+#### 2. Processing a Request (Technician)
 
----
+1.  Log in as **Technician**.
+2.  Your **Technician Dashboard** shows assigned tasks.
+3.  Open the **Kanban Board**.
+4.  Drag the task to **In Progress**.
+5.  Once finished, log hours in the input field and drag to **Repaired**.
 
-## 🧑‍💻 User Interface & Views
+#### 3. Scheduling Maintenance
 
----
-
-## 🧩 1. Maintenance Kanban Board
-
-The **primary workspace** for technicians.
-
-### Kanban Stages
-
-* **New**
-* **In Progress**
-* **Repaired**
-* **Scrap**
-
-### Key UI Features
-
-* ✅ **Drag & Drop** between stages
-* 👤 **Technician Avatar** displayed on cards
-* ⏰ **Overdue Indicator**
-
-  * Red strip or text for overdue requests
+1.  Log in as **Manager**.
+2.  Go to **Calendar**.
+3.  Click on a future date.
+4.  Select Equipment and choose **"Preventive"** type.
+5.  Save.
 
 ---
 
-## 📅 2. Calendar View
+## 📂 Project Structure
 
-Used mainly for **Preventive Maintenance**.
-
-### Features
-
-* Displays all scheduled preventive requests
-* Click on a date to:
-
-  * Create a new maintenance request
-* Helps technicians plan their workload
-
----
-
-## 📊 3. Reports (Optional / Advanced)
-
-### Pivot / Graph Reports
-
-* Number of requests:
-
-  * Per Maintenance Team
-  * Per Equipment Category
-
-Used for:
-
-* Performance analysis
-* Resource planning
-* Management insights
+```
+├── Backend/
+│   ├── config/         # Database configuration
+│   ├── controllers/    # Route logic
+│   ├── middleware/     # Auth & Upload middleware
+│   ├── models/         # Sequelize schemas
+│   ├── routes/         # API endpoints
+│   └── server.js       # Entry point
+│
+└── Frontend/
+    ├── src/
+    │   ├── components/ # Reusable UI components
+    │   ├── context/    # AuthContext
+    │   ├── pages/      # Full page views (Dashboard, Kanban, etc.)
+    │   ├── utils/      # API helpers
+    │   └── App.jsx     # Routing & Layout
+```
 
 ---
 
-## 🤖 Automation & Smart Features
+## 🔗 API Endpoints
 
-These features elevate GearGuard from a basic form-based system to a **smart maintenance platform**.
+### Auth
 
----
+- `POST /api/auth/login`
+- `POST /api/auth/signup`
 
-### 🔘 Smart Buttons
+### Equipment
 
-#### Maintenance Button (on Equipment Form)
+- `GET /api/equipment` - List all
+- `POST /api/equipment` - Create
+- `PUT /api/equipment/:id/scrap` - Mark as scrapped
 
-* Opens all maintenance requests related to that equipment
-* Displays a **badge count** of open requests
-* Enables quick access to machine history
+### Requests
 
----
-
-### 🗑️ Scrap Logic
-
-* When a request moves to **Scrap**:
-
-  * System must mark equipment as **non-usable**
-  * Example actions:
-
-    * Set a “Scrapped” flag
-    * Log a note or status update
-
----
-
-## 🧠 Key Business Rules Summary
-
-* Equipment defines responsibility
-* Teams restrict access
-* Requests drive all workflows
-* Preventive ≠ Corrective logic
-* UI must be interactive and informative
-* Automation reduces manual errors
-
----
-
-## 🔗 Design Reference
-
-Mockup provided via Excalidraw:
-[https://link.excalidraw.com/l/65VNwvy7c4X/5y5Qt87q1Qp](https://link.excalidraw.com/l/65VNwvy7c4X/5y5Qt87q1Qp)
-
----
-
-## ✅ Conclusion
-
-**GearGuard** is a full-featured maintenance management solution designed to:
-
-* Improve asset uptime
-* Streamline technician workflows
-* Provide management visibility
-* Deliver a modern, intelligent UX
+- `GET /api/requests` - List assignments
+- `POST /api/requests` - Create new request (with image)
+- `PUT /api/requests/:id/status` - Update workflow stage
+- `PUT /api/requests/:id/duration` - Log work hours
