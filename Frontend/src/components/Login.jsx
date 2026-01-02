@@ -25,8 +25,13 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-card">
+        <div className="animated-welcome">
+          <span>Hello World</span>
+        </div>
         <h2 className="login-title">Welcome Back</h2>
         <p className="login-subtitle">Please sign in to continue</p>
+
+
 
         {error && <p style={{ color: 'red', textAlign: 'center', marginBottom: '1rem' }}>{error}</p>}
 

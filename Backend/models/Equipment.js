@@ -35,6 +35,10 @@ const Equipment = sequelize.define('Equipment', {
     type: DataTypes.ENUM('Active', 'Maintenance', 'Scrapped'),
     defaultValue: 'Active'
   },
+  image_url: {
+    type: DataTypes.STRING(255),
+    allowNull: true
+  },
   department_id: {
     type: DataTypes.INTEGER,
     references: {

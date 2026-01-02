@@ -30,7 +30,7 @@ const TechnicianDashboard = () => {
 
     const handleStatusChange = async (draggableId, newStatus) => {
         // Optimistic Update
-        const updatedRequests = requests.map(r => 
+        const updatedRequests = requests.map(r =>
             r.id == draggableId ? { ...r, status: newStatus } : r
         );
         setRequests(updatedRequests);
@@ -54,33 +54,42 @@ const TechnicianDashboard = () => {
         }
     };
 
+    const getTimeBasedGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good Morning";
+        if (hour < 17) return "Good Afternoon";
+        return "Good Evening";
+    };
+
     if (loading) return <div style={{ padding: '20px' }}>Loading Dashboard...</div>;
 
     return (
         <div className="kanban-page-container" style={{ padding: '20px', height: '100vh', display: 'flex', flexDirection: 'column' }}>
             <div className="dashboard-header" style={{ marginBottom: '20px' }}>
-                <h1 style={{ color: '#1e293b', marginBottom: '10px' }}>Hello, {user.first_name} 👋</h1>
-                <p style={{ color: '#64748b' }}>Here are your assigned maintenance tasks.</p>
+                <div className="animated-welcome" style={{ textAlign: 'left', fontSize: '2rem', marginBottom: '10px' }}>
+                    <span>{getTimeBasedGreeting()}, {user.first_name} 👋</span>
+                </div>
+                <p style={{ color: 'var(--text-secondary)' }}>Here are your assigned maintenance tasks.</p>
             </div>
 
             <div className="kanban-header" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontSize: '1.2rem', fontWeight: '600', color: '#334155' }}>My Task Board</h2>
+                <h2 style={{ fontSize: '1.2rem', fontWeight: '600', color: 'var(--text-primary)' }}>My Task Board</h2>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <button onClick={() => navigate('/calendar')} className="btn-secondary" style={{ padding: '10px 15px', background: '#e2e8f0', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+                    <button onClick={() => navigate('/calendar')} className="btn-secondary">
                         View Schedule
                     </button>
-                    <button onClick={() => navigate('/equipment')} className="btn-secondary" style={{ padding: '10px 15px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
+                    <button onClick={() => navigate('/equipment')} className="btn-secondary" style={{ background: 'var(--primary-color)', color: 'white', border: 'none' }}>
                         Equipment List
                     </button>
                 </div>
             </div>
-            
+
             <div style={{ flexGrow: 1, overflow: 'hidden' }}>
-                 <KanbanBoardComponent 
-                    requests={requests} 
-                    onStatusChange={handleStatusChange} 
+                <KanbanBoardComponent
+                    requests={requests}
+                    onStatusChange={handleStatusChange}
                     onDurationChange={handleDurationChange}
-                 />
+                />
             </div>
         </div>
     );

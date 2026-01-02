@@ -66,11 +66,22 @@ const Dashboard = () => {
     const technicians = users.filter(u => u.role === 'Technician').length;
     const employees = users.filter(u => u.role === 'Employee').length;
 
+    const getTimeBasedGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good Morning";
+        if (hour < 17) return "Good Afternoon";
+        return "Good Evening";
+    };
+
     return (
         <div style={{ paddingBottom: '40px' }}>
-            <div className="dashboard-welcome" style={{ marginBottom: '25px' }}>
-                 <h1>Welcome back, {user.first_name} 👋</h1>
-                 <p style={{ color: '#64748b' }}>Here's what's happening in your facility today.</p>
+            <div className="dashboard-header" style={{ marginBottom: '25px' }}>
+                <div className="animated-welcome" style={{ fontSize: '2rem', marginBottom: '10px' }}>
+                    <span>{getTimeBasedGreeting()}, {user.first_name}</span>
+                </div>
+                <p style={{ color: 'var(--text-secondary)' }}>Here's what's happening in your facility today.</p>
+
+
             </div>
 
             <div className="dashboard-stats">
@@ -97,15 +108,15 @@ const Dashboard = () => {
                 <button onClick={() => navigate('/equipment/new')} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span>+</span> Add Equipment
                 </button>
-                <button onClick={() => navigate('/calendar')} className="btn-secondary" style={{ background: 'white', border: '1px solid #cbd5e1' }}>
-                    📅 View Calendar
+                <button onClick={() => navigate('/calendar')} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>📅</span> View Calendar
                 </button>
             </div>
 
             {/* Charts Section */}
-            <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
-                <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                    <h3 style={{ marginBottom: '20px', color: '#334155' }}>Request Status</h3>
+            <div className="charts-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+                <div className="chart-card" style={{ background: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid var(--border-color)' }}>
+                    <h3 style={{ marginBottom: '20px', color: 'var(--text-primary)' }}>Request Status</h3>
                     <div style={{ width: '100%', height: 300 }}>
                         <ResponsiveContainer>
                             <PieChart>
@@ -122,21 +133,21 @@ const Dashboard = () => {
                                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip />
-                                <Legend />
+                                <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }} />
+                                <Legend wrapperStyle={{ color: 'var(--text-secondary)' }} />
                             </PieChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
-                <div className="chart-card" style={{ background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                    <h3 style={{ marginBottom: '20px', color: '#334155' }}>Team Workload</h3>
+                <div className="chart-card" style={{ background: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid var(--border-color)' }}>
+                    <h3 style={{ marginBottom: '20px', color: 'var(--text-primary)' }}>Team Workload</h3>
                     <div style={{ width: '100%', height: 300 }}>
                         <ResponsiveContainer>
                             <BarChart data={teamReport}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="team_name" axisLine={false} tickLine={false} />
-                                <YAxis axisLine={false} tickLine={false} />
-                                <Tooltip cursor={{ fill: '#f1f5f9' }} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="team_name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-secondary)' }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-secondary)' }} />
+                                <Tooltip cursor={{ fill: 'var(--bg-primary)' }} contentStyle={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }} />
                                 <Bar dataKey="request_count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
@@ -144,25 +155,25 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <h2>User Management</h2>
-            <div className="table-responsive" style={{ background: 'white', borderRadius: '12px', padding: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+            <h2 style={{ color: 'var(--text-primary)', marginBottom: '15px' }}>User Management</h2>
+            <div className="table-responsive" style={{ background: 'var(--bg-secondary)', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', border: '1px solid var(--border-color)' }}>
                 <table className="user-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th style={{ background: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>Name</th>
+                            <th style={{ background: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>Email</th>
+                            <th style={{ background: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>Role</th>
+                            <th style={{ background: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>Status</th>
+                            <th style={{ background: 'var(--bg-primary)', color: 'var(--text-secondary)' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((u) => (
-                            <tr key={u.id}>
-                                <td>
-                                    <div style={{ fontWeight: '500', color: '#334155' }}>{u.first_name} {u.last_name}</div>
+                            <tr key={u.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                                <td style={{ color: 'var(--text-primary)' }}>
+                                    <div style={{ fontWeight: '500' }}>{u.first_name} {u.last_name}</div>
                                 </td>
-                                <td>{u.email}</td>
+                                <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
                                 <td>
                                     <select
                                         value={u.role}

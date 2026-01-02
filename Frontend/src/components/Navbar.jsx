@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from './ThemeToggle';
 import '../App.css';
 
 const Navbar = () => {
@@ -65,6 +66,7 @@ const Navbar = () => {
             </div>
 
             <div className="user-info">
+                <ThemeToggle />
                 <span>{user?.first_name || user?.name} ({user?.role})</span>
                 <button onClick={handleLogout} className="logout-btn">Logout</button>
             </div>

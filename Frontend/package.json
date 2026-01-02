@@ -10,9 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.20",
+    "@fullcalendar/interaction": "^6.1.20",
+    "@fullcalendar/react": "^6.1.20",
+    "@fullcalendar/timegrid": "^6.1.20",
     "@hello-pangea/dnd": "^18.0.1",
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
+    "date-holidays": "^3.26.6",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",
     "react-big-calendar": "^1.19.4",

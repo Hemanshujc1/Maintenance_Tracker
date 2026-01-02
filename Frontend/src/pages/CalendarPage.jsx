@@ -1,26 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import format from 'date-fns/format';
-import parse from 'date-fns/parse';
-import startOfWeek from 'date-fns/startOfWeek';
-import getDay from 'date-fns/getDay';
-import enUS from 'date-fns/locale/en-US';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import Holidays from 'date-holidays';
 import api from '../utils/api';
 import RequestForm from '../components/RequestForm';
 import './CalendarPage.css';
-
-const locales = {
-  'en-US': enUS,
-};
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
 
 const CalendarPage = () => {
     const [events, setEvents] = useState([]);
@@ -34,25 +20,62 @@ const CalendarPage = () => {
 
     const fetchEvents = async () => {
         try {
-            const res = await api.get('/requests'); // Fetch ALL requests
-            const formattedEvents = res.data
-                .filter(req => req.scheduled_date) // Only show scheduled ones
+            // 1. Fetch Maintenance Requests
+            const res = await api.get('/requests');
+            const maintenanceEvents = res.data
+                .filter(req => req.scheduled_date)
                 .map(req => {
+                    // Start date
                     const startDate = new Date(req.scheduled_date);
-                    // Add 1 hour duration by default so it shows up in Week/Day views
-                    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); 
-                    
+                    // End date (default +1 hour if not specified, though usually backend might have duration)
+                    // FullCalendar handles null end dates by assuming default duration, but better to be explicit
+                    const endDate = req.completion_date ? new Date(req.completion_date) : new Date(startDate.getTime() + 60 * 60 * 1000);
+
+                    // Color coding
+                    let backgroundColor = '#3b82f6'; // blue
+                    if (req.status === 'Repaired') backgroundColor = '#22c55e'; // green
+                    if (req.status === 'Scrap') backgroundColor = '#ef4444'; // red
+                    if (req.status === 'New') backgroundColor = '#a855f7'; // purple
+
                     return {
                         id: req.id,
                         title: `${req.Equipment ? req.Equipment.name : 'Unknown'} (${req.Equipment?.location || 'No Loc'}): ${req.subject}`,
                         start: startDate,
-                        end: endDate, 
-                        allDay: false, 
-                        status: req.status,
-                        resource: req
+                        end: endDate,
+                        backgroundColor: backgroundColor,
+                        borderColor: backgroundColor,
+                        extendedProps: {
+                            type: 'maintenance',
+                            status: req.status,
+                            resource: req
+                        }
                     };
                 });
-            setEvents(formattedEvents);
+
+            // 2. Fetch Holidays
+            const hd = new Holidays('IN');
+            const currentYear = new Date().getFullYear();
+            const nextYear = currentYear + 1;
+
+            // Get holidays for current and next year to cover edges
+            const holidayEvents = [
+                ...hd.getHolidays(currentYear),
+                ...hd.getHolidays(nextYear)
+            ].map(h => ({
+                id: `holiday-${h.date}-${h.name}`,
+                title: `🎉 ${h.name}`,
+                start: h.start,
+                end: h.end,
+                backgroundColor: '#f59e0b', // Amber
+                borderColor: '#f59e0b',
+                allDay: true,
+                extendedProps: {
+                    type: 'holiday',
+                    description: h.type
+                }
+            }));
+
+            setEvents([...maintenanceEvents, ...holidayEvents]);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching calendar events:', error);
@@ -60,61 +83,53 @@ const CalendarPage = () => {
         }
     };
 
-    const handleSelectSlot = ({ start }) => {
-        // Only allow future dates or today
+    const handleDateClick = (arg) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        if (start >= today) {
-            setSelectedDate(format(start, 'yyyy-MM-dd'));
+
+        // Disable past dates logic if desired, or keep it open
+        if (arg.date >= today) {
+            setSelectedDate(arg.dateStr); // 'YYYY-MM-DD'
             setShowModal(true);
         }
-    };
-
-    const handleEventStyle = (event) => {
-        let backgroundColor = '#3b82f6'; // blue
-        if (event.status === 'Repaired') backgroundColor = '#22c55e'; // green
-        if (event.status === 'Scrap') backgroundColor = '#ef4444'; // red
-        if (event.status === 'New') backgroundColor = '#a855f7'; // purple
-
-        return {
-            style: {
-                backgroundColor,
-                borderRadius: '4px',
-                opacity: 0.9,
-                color: 'white',
-                border: '0px',
-                display: 'block'
-            }
-        };
     };
 
     return (
         <div className="calendar-page-outer">
             <h2 className="calendar-title">Preventive Maintenance Schedule</h2>
             <div className="calendar-container">
-                <Calendar
-                    localizer={localizer}
+                <FullCalendar
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                    initialView="dayGridMonth"
+                    headerToolbar={{
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    }}
                     events={events}
-                    startAccessor="start"
-                    endAccessor="end"
-                    style={{ height: 'calc(100vh - 150px)' }}
-                    onSelectSlot={handleSelectSlot}
-                    selectable
-                    eventPropGetter={handleEventStyle}
-                    views={['month', 'week', 'agenda']}
+                    dateClick={handleDateClick}
+                    height="100%"
+                    editable={false}
+                    selectable={true}
+                    selectMirror={true}
+                    dayMaxEvents={true}
+                    eventClick={(info) => {
+                        // Optional: could open details modal
+                        // alert('Event: ' + info.event.title);
+                    }}
                 />
             </div>
 
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <button 
+                        <button
                             onClick={() => setShowModal(false)}
                             className="modal-close"
                         >
                             &times;
                         </button>
-                        <RequestForm 
+                        <RequestForm
                             initialDate={selectedDate}
                             onRequestCreated={() => {
                                 setShowModal(false);

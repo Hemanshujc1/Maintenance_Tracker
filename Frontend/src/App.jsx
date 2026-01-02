@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import Dashboard from './components/Dashboard';
@@ -41,64 +42,71 @@ const RoleBasedRedirect = () => {
   return <Navigate to="/equipment" replace />;
 };
 
+import AIChatWidget from './components/AIChatWidget';
+
+// ... existing code
+
 function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          } />
-          <Route path="/signup" element={
-            <PublicRoute>
-              <SignUp />
-            </PublicRoute>
-          } />
-          <Route path="/forgot-password" element={
-            <PublicRoute>
-              <ForgotPassword />
-            </PublicRoute>
-          } />
-          <Route path="/unauthorized" element={<Unauthorized />} />
+    <ThemeProvider>
+      <Router>
+        <AuthProvider>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            } />
+            <Route path="/signup" element={
+              <PublicRoute>
+                <SignUp />
+              </PublicRoute>
+            } />
+            <Route path="/forgot-password" element={
+              <PublicRoute>
+                <ForgotPassword />
+              </PublicRoute>
+            } />
+            <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Protected Routes Wrapped in DashboardLayout */}
-          <Route element={<DashboardLayout />}>
-            {/* Admin/Manager Dashboard */}
-            <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
-              <Route path="/dashboard" element={<Dashboard />} />
+            {/* Protected Routes Wrapped in DashboardLayout */}
+            <Route element={<DashboardLayout />}>
+              {/* Admin/Manager Dashboard */}
+              <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+              </Route>
+
+              {/* Equipment Routes - Accessible to Admin, Manager, Technician */}
+              <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician', 'Employee']} />}>
+                <Route path="/equipment" element={<EquipmentList />} />
+                <Route path="/equipment/new" element={<EquipmentForm />} />
+                <Route path="/equipment/:id" element={<EquipmentDetail />} />
+                <Route path="/equipment/:id/edit" element={<EquipmentForm />} />
+              </Route>
+
+              {/* Calendar & Reports Routes */}
+              <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician']} />}>
+                <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/kanban" element={<KanbanBoard />} />
+                <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
+              </Route>
+
+              <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
+                <Route path="/reports" element={<ReportsPage />} />
+              </Route>
             </Route>
 
-            {/* Equipment Routes - Accessible to Admin, Manager, Technician */}
-            <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician', 'Employee']} />}>
-              <Route path="/equipment" element={<EquipmentList />} />
-              <Route path="/equipment/new" element={<EquipmentForm />} />
-              <Route path="/equipment/:id" element={<EquipmentDetail />} />
-              <Route path="/equipment/:id/edit" element={<EquipmentForm />} />
-            </Route>
+            {/* Redirect root based on role */}
+            <Route path="/" element={<RoleBasedRedirect />} />
 
-            {/* Calendar & Reports Routes */}
-            <Route element={<ProtectedRoute roles={['Admin', 'Manager', 'Technician']} />}>
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/kanban" element={<KanbanBoard />} />
-              <Route path="/technician-dashboard" element={<TechnicianDashboard />} />
-            </Route>
-
-            <Route element={<ProtectedRoute roles={['Admin', 'Manager']} />}>
-              <Route path="/reports" element={<ReportsPage />} />
-            </Route>
-          </Route>
-
-          {/* Redirect root based on role */}
-          <Route path="/" element={<RoleBasedRedirect />} />
-
-          {/* Catch all */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </AuthProvider>
-    </Router>
+            {/* Catch all */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+          <AIChatWidget />
+        </AuthProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 
