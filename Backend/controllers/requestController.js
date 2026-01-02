@@ -42,7 +42,7 @@ exports.getAllRequests = async (req, res) => {
         const requests = await Request.findAll({
             where: whereClause,
             include: [
-                { model: Equipment, attributes: ['name', 'serial_number', 'location'] },
+                { model: Equipment, attributes: ['name', 'serial_number', 'location', 'image_url'] },
                 { model: User, as: 'requestor', attributes: ['first_name', 'last_name'] },
                 { model: User, as: 'assignedTechnician', attributes: ['first_name', 'last_name'] }
             ],
@@ -89,14 +89,14 @@ exports.updateRequestStatus = async (req, res) => {
         if (status === 'Repaired' && request.status !== 'Repaired') {
             request.completion_date = new Date();
         }
-        
+
         // Scrap Logic: If Request is Scrap, Equipment is Scrapped
         if (status === 'Scrap') {
-             const equipment = await Equipment.findByPk(request.equipment_id);
-             if (equipment) {
-                 equipment.status = 'Scrapped';
-                 await equipment.save();
-             }
+            const equipment = await Equipment.findByPk(request.equipment_id);
+            if (equipment) {
+                equipment.status = 'Scrapped';
+                await equipment.save();
+            }
         }
 
         request.status = status;
@@ -124,9 +124,9 @@ exports.assignTechnician = async (req, res) => {
         if (request.Equipment && request.Equipment.maintenance_team_id) {
             const technician = await User.findByPk(technician_id);
             if (!technician || technician.maintenance_team_id !== request.Equipment.maintenance_team_id) {
-                 return res.status(400).json({ 
-                     message: 'Technician must belong to the maintenance team assigned to this equipment.' 
-                 });
+                return res.status(400).json({
+                    message: 'Technician must belong to the maintenance team assigned to this equipment.'
+                });
             }
         }
 

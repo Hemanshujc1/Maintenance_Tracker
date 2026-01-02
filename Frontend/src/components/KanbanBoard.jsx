@@ -69,6 +69,15 @@ const KanbanBoard = ({ requests, onStatusChange, onDurationChange }) => {
                                                         }}
                                                     >
                                                         <div className={`priority-strip ${task.priority.toLowerCase()}`}></div>
+                                                        {task.Equipment && task.Equipment.image_url && (
+                                                            <div className="kanban-card-image" style={{ width: '100%', height: '120px', marginBottom: '10px', overflow: 'hidden', borderRadius: '4px' }}>
+                                                                <img
+                                                                    src={`http://localhost:5000${task.Equipment.image_url}`}
+                                                                    alt={task.Equipment.name}
+                                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                                />
+                                                            </div>
+                                                        )}
                                                         <div className="card-content">
                                                             <h4>{task.subject}</h4>
                                                             <div className="card-meta">
@@ -89,7 +98,6 @@ const KanbanBoard = ({ requests, onStatusChange, onDurationChange }) => {
                                                                             <option value="Repaired">Repaired</option>
                                                                             <option value="Scrap">Scrap</option>
                                                                         </select>
-                                                                        {task.image_url && <span title="Has Image">📷</span>}
                                                                     </div>
                                                                     {task.assignedTechnician && (
                                                                         <div className="tech-avatar" title={task.assignedTechnician.first_name}>
