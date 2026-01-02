@@ -77,10 +77,10 @@ const KanbanBoard = ({ requests, onStatusChange, onDurationChange }) => {
                                                             <div className="card-footer" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
                                                                 <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
                                                                     <div className="footer-left" style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
-                                                                        <select 
+                                                                        <select
                                                                             value={task.status}
                                                                             onChange={(e) => onStatusChange(String(task.id), e.target.value)}
-                                                                            onClick={(e) => e.stopPropagation()} 
+                                                                            onClick={(e) => e.stopPropagation()}
                                                                             className="status-select-mini"
                                                                             style={{ fontSize: '0.8rem', padding: '2px', borderRadius: '4px', border: '1px solid #ccc' }}
                                                                         >
@@ -108,7 +108,7 @@ const KanbanBoard = ({ requests, onStatusChange, onDurationChange }) => {
                                                                 {/* Duration Input */}
                                                                 {(task.status === 'In Progress' || task.status === 'Repaired') && (
                                                                     <div className="duration-input" style={{ width: '100%' }}>
-                                                                       <input
+                                                                        <input
                                                                             type="number"
                                                                             placeholder="Hrs"
                                                                             defaultValue={task.duration_hours || ''}
@@ -119,9 +119,9 @@ const KanbanBoard = ({ requests, onStatusChange, onDurationChange }) => {
                                                                                 }
                                                                             }}
                                                                             onClick={(e) => e.stopPropagation()}
-                                                                            style={{ width: '60px', fontSize: '0.8rem', padding: '2px', border: '1px solid #ddd', borderRadius: '4px' }}
+                                                                            className="duration-input-field"
                                                                         />
-                                                                        <span style={{ fontSize: '0.75rem', color: '#666', marginLeft: '5px' }}>hrs spent</span>
+                                                                        <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginLeft: '5px' }}>hrs spent</span>
                                                                     </div>
                                                                 )}
                                                             </div>
